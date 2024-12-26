@@ -1,8 +1,11 @@
 package com.example.socialmedia.controller;
 
 
+import com.example.socialmedia.entity.Comment;
+import com.example.socialmedia.entity.CommentBody;
 import com.example.socialmedia.entity.Post;
 import com.example.socialmedia.entity.PostBody;
+import com.example.socialmedia.service.CommentService;
 import com.example.socialmedia.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,6 +21,9 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private CommentService commentService;
+
     private Post post;
 
     // Create a new post
@@ -26,6 +32,17 @@ public class PostController {
         post = new Post(postBody.getContent());
         return postService.createPost(post);
     }
+
+    // Add a comment to a post
+    @PostMapping("/{postId}/comments")
+    public Post addComment(@PathVariable String postId,
+                           @RequestBody CommentBody commentBody) {
+
+        ;
+        return postService.addCommentToPost(postId,
+                commentService.createComment(commentBody.getContent(), postId));
+    }
+
 
     // Get all posts
     /*@GetMapping
@@ -40,7 +57,7 @@ public class PostController {
         // Get username
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-        myUsername = authentication.getName(); // This will return the username
+            myUsername = authentication.getName(); // This will return the username
         }
         else {
             myUsername = null;
