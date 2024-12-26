@@ -1,9 +1,12 @@
 package com.example.socialmedia.service;
 
+import com.example.socialmedia.entity.Comment;
 import com.example.socialmedia.entity.Post;
 import com.example.socialmedia.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,29 @@ public class PostService {
     /*public List<Post> getAllPosts() {
         return postRepository.findAll();
     }*/
+
+    // Add a comment to a post
+    public Post addCommentToPost(String postId, Comment comment) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (post.getComments() == null) {
+            post.setComments(new ArrayList<>());
+        }
+
+        post.getComments().add(comment);
+        return postRepository.save(post);
+
+        /*Optional<Post> postOptional = postRepository.findById(postId);
+        if(postOptional.isPresent()) {
+            Post post = postOptional.get();
+            post.getComments().add(comment);
+            return postRepository.save(post);
+        }
+        else {
+            throw new RuntimeException("Post not found" + postId);
+        }*/
+    }
 
     public List<Post> getAllPosts(String username) {
         return postRepository.findByUser(username);
