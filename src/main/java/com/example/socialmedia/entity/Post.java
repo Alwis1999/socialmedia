@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Document(collection = "posts")
@@ -17,6 +19,7 @@ public class Post {
     private String content;
     private String user;
     private LocalDateTime createdAt;
+    private List<Comment> comments; // Initialize the list;
 
     public Post(String content) {
         this.content = content;
@@ -24,7 +27,7 @@ public class Post {
         // Get username
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-        user = authentication.getName(); // This will return the username
+            user = authentication.getName(); // This will return the username
         }
         else {
             user = null;
@@ -32,36 +35,12 @@ public class Post {
         this.createdAt = LocalDateTime.now();
     }
 
-
-    public String getId() {
-        return id;
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
