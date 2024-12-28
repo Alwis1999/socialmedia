@@ -29,14 +29,14 @@ public class UserInfoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
-    public String addUser(UserInfo userInfo) {
-        // Encode password before saving the user
-        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
-        repository.save(userInfo);
-        return "User Added Successfully";
-    }
 
     public String signUp(UserInfo userInfo) {
+
+        // Check if username already exists
+        if (repository.findByUsername(userInfo.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+
         // Encode password before saving the user
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
         repository.save(userInfo);
