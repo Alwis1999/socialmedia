@@ -1,19 +1,18 @@
 package com.example.socialmedia.controller;
 
 
+import com.example.socialmedia.entity.BaseFile;
 import com.example.socialmedia.entity.Post;
-import com.example.socialmedia.entity.PostBody;
+import com.example.socialmedia.dto.PostBody;
 import com.example.socialmedia.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
-public class PostController {
+public class PostController extends BaseFile {
 
     @Autowired
     private PostService postService;
@@ -27,25 +26,11 @@ public class PostController {
         return postService.createPost(post);
     }
 
-    // Get all posts
-    /*@GetMapping
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
-    }*/
-
     // Get logged user posts
     @GetMapping("/myposts")
     public List<Post> getMyPosts() {
         String myUsername;
-        // Get username
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-        myUsername = authentication.getName(); // This will return the username
-        }
-        else {
-            myUsername = null;
-        }
-
+        myUsername = loggedUsername();
         return postService.getAllPosts(myUsername);
     }
 
@@ -57,7 +42,7 @@ public class PostController {
 
     // Get a post by user
     @GetMapping("/{user}")
-    public List<Post> getPostByUser(@PathVariable String user) {
+    public List<Post> getPostByUser(@RequestBody String user) {
         return postService.getAllPosts(user);
     }
 

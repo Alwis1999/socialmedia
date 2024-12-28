@@ -1,6 +1,6 @@
 package com.example.socialmedia.controller;
 
-import com.example.socialmedia.entity.AuthRequest;
+import com.example.socialmedia.dto.AuthRequest;
 import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.service.JwtService;
 import com.example.socialmedia.service.UserInfoService;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired
-    private UserInfoService userInforService;
+    private UserInfoService userInfoService;
 
     @Autowired
     private JwtService jwtService;
@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public String signUp(@RequestBody UserInfo userInfo) {
-        return userInforService.signUp(userInfo);
+        return userInfoService.signUp(userInfo);
     }
 
     @GetMapping("/user/profile")
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/user/Admin")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String adminProfile() {
         return "Welcome to Admin Profile";
     }

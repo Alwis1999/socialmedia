@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserInfoRepository extends MongoRepository<UserInfo, String> { // Assuming the ID type is String for MongoDB
     Optional<UserInfo> findByEmail(String email); // Use 'email' if that is the correct field for login
-    Optional<UserInfo> findByUsername(String username); // find by user name
+    Optional<UserInfo> findByUsername(String username); // find by username
+    Optional<UserInfo> findById(String userId);
 }

@@ -38,15 +38,6 @@ public class PostService {
         post.getComments().add(comment);
         return postRepository.save(post);
 
-        /*Optional<Post> postOptional = postRepository.findById(postId);
-        if(postOptional.isPresent()) {
-            Post post = postOptional.get();
-            post.getComments().add(comment);
-            return postRepository.save(post);
-        }
-        else {
-            throw new RuntimeException("Post not found" + postId);
-        }*/
     }
 
     public List<Post> getAllPosts(String username) {

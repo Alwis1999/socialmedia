@@ -1,4 +1,4 @@
-package com.example.socialmedia.entity;
+package com.example.socialmedia.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.example.socialmedia.entity;
+package com.example.socialmedia.dto;
 
 public class PostBody {
     private String content;
