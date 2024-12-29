@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class FriendRequestDTO {
 
-    private String fromUserId;
+    private String userId;
 
-    public FriendRequestDTO(String fromUserId) {
-        this.fromUserId = fromUserId;
+    public FriendRequestDTO(String userId) {
+        this.userId = userId;
     }
 }

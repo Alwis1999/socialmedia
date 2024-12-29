@@ -29,7 +29,6 @@ public class UserInfoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
-
     public String signUp(UserInfo userInfo) {
 
         // Check if username already exists
