@@ -15,15 +15,16 @@ public class RequestController {
     private FriendService friendService;
 
     @PostMapping("/request")
-    public String sendFriendRequest(@RequestBody Map<String, String> requestBody) {
-        String fromUserId = requestBody.get("fromUserId");
-        String toUserId = requestBody.get("toUserId");
-        return friendService.sendFriendRequest(fromUserId, toUserId);
+    public String sendFriendRequest(@RequestBody FriendRequestDTO requestBody) {
+
+        String toUserId = requestBody.getUserId();
+        return friendService.sendFriendRequest(toUserId);
     }
 
     @PostMapping("/accept")
     public String acceptFriendRequest(@RequestBody FriendRequestDTO friendRequestDTO) {
-        return friendService.acceptFriendRequest(friendRequestDTO.getFromUserId());
+        System.out.println("\n\n\n"+friendRequestDTO.getUserId()+"\n\n\n");
+        return friendService.acceptFriendRequest(friendRequestDTO.getUserId());
     }
 
     @GetMapping("/requests")

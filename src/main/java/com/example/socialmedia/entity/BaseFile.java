@@ -29,13 +29,12 @@ public class BaseFile {
     }
 
     protected String loggedUserId() {
-        String userId;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication != null && authentication.isAuthenticated() &&
-        authentication.getPrincipal() instanceof UserInfo) {
-            System.out.println("\n\n\n"+" this is *** "+"\n\n\n");
-            return (((UserInfo) authentication.getPrincipal()).getId());
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            return userInfoRepository.findByUsername(username)
+                    .map(UserInfo::getId)
+                    .orElse(null);
         }
         return null;
     }

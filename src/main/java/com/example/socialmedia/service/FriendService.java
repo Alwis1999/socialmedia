@@ -14,17 +14,19 @@ public class FriendService extends BaseFile {
     @Autowired
     private UserInfoRepository userInfoRepository;
 
-    public String sendFriendRequest(String fromUserId, String toUserId) {
-        System.out.println("\n\n"+fromUserId+"\n\n");
-        UserInfo fromUser = userInfoRepository.findById(fromUserId).orElseThrow(() ->
-                new RuntimeException("User not found"));
+    public String sendFriendRequest(String toUserId) {
+        String fromUserId = loggedUserId();
+        System.out.println("\n\n\n"+toUserId+"\n\n\n");
+        System.out.println("\n\n\n"+fromUserId+"\n\n\n");
+
+        if (toUserId == null || fromUserId == null) {
+            throw new IllegalArgumentException("User IDs cannot be null");
+        }
         UserInfo toUser = userInfoRepository.findById(toUserId).orElseThrow(() ->
                 new RuntimeException("User not found"));
-
         if(toUser.getFriendsRequest().contains(fromUserId)) {
             return "Friend request already sent";
         }
-
         toUser.getFriendsRequest().add(fromUserId);
         userInfoRepository.save(toUser);
 
@@ -40,7 +42,6 @@ public class FriendService extends BaseFile {
         if (!user.getFriendsRequest().contains(fromUserId)) {
             return "No such friend request!!!!";
         }
-
 
         // Update the users details
         user.getFriendsRequest().remove(fromUserId);
