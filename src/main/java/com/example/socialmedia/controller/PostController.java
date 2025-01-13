@@ -33,6 +33,7 @@ public class PostController {
         return postService.createPost(post);
     }
 
+<<<<<<< Updated upstream
     // Add a comment to a post
     @PostMapping("/{postId}/comments")
     public Post addComment(@PathVariable String postId,
@@ -50,6 +51,15 @@ public class PostController {
         return postService.getAllPosts();
     }*/
 
+=======
+    // Get a feed for the logged user
+    @GetMapping("/myfeed")
+    public List<Post> getMyFeed() {
+        return postService.getMyFeed();
+    }
+
+
+>>>>>>> Stashed changes
     // Get logged user posts
     @GetMapping("/myposts")
     public List<Post> getMyPosts() {
