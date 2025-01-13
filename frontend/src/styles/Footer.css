@@ -1,0 +1,32 @@
+.footer {
+    background-color: rgba(0, 0, 0, 0.8); /* Dark translucent background */
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .footer p {
+    margin: 5px 0;
+    font-size: 1rem;
+  }
+  
+  .social-icons {
+    margin-top: 10px;
+  }
+  
+  .social-icons a {
+    margin: 0 10px;
+    color: #ffffff;
+    font-size: 1.5rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .social-icons a:hover {
+    color: #007bff; /* Blue hover color */
+  }
+  
