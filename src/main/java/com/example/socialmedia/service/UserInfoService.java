@@ -1,5 +1,6 @@
 package com.example.socialmedia.service;
 
+import com.example.socialmedia.dto.SignUpDTO;
 import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +30,23 @@ public class UserInfoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
-    public String addUser(UserInfo userInfo) {
-        // Encode password before saving the user
-        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
-        repository.save(userInfo);
-        return "User Added Successfully";
-    }
+    public String registerNewUser(SignUpDTO signUpDTO) {
+        // Check if username already exists
+        if (repository.findByUsername(signUpDTO.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
 
-    public String signUp(UserInfo userInfo) {
-        // Encode password before saving the user
-        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+        // Check if email already exists
+        if (repository.findByEmail(signUpDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername(signUpDTO.getUsername());
+        userInfo.setPassword(encoder.encode(signUpDTO.getPassword()));
+        userInfo.setEmail(signUpDTO.getEmail());
+        userInfo.setRoles("ROLE_USER");
+
         repository.save(userInfo);
         return "User Added Successfully";
     }

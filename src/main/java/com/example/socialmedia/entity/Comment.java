@@ -21,15 +21,15 @@ public class Comment {
     public Comment(String comment, String postId) {
         this.postId = postId;
         this.comment = comment;
+        this.user = getLoggedUsername();
+        this.commentAt = LocalDateTime.now();
+    }
 
-        // Get username
+    private String getLoggedUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            user = authentication.getName(); // This will return the username
+            return authentication.getName(); // Return the username
         }
-        else {
-            user = null;
-        }
-        this.commentAt = LocalDateTime.now();
+        return null; // Return null if not authenticated
     }
 }
