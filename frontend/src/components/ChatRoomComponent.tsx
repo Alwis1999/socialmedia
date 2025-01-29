@@ -125,6 +125,7 @@ const ChatRoomComponent: React.FC = () => {
     }
   };
 
+<<<<<<< HEAD
   return (
     <div className="chat-room-container">
       <h2>Friends</h2>
@@ -163,6 +164,105 @@ const ChatRoomComponent: React.FC = () => {
         ) : (
           <p>Select a friend to start messaging.</p>
         )}
+=======
+  const getInitials = (username: string) => {
+    return username
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const formatMessageTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+
+    // Format date
+    const dateStr = date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
+    // Format time
+    const timeStr = date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    return `${dateStr} ${timeStr}`;
+  };
+
+  return (
+    <div className="chat-app-wrapper">
+      <div className="chat-room-container">
+        <div className="friends-sidebar">
+          <h2>Friends</h2>
+          <div className="friends-list">
+            {friends.map((friend) => (
+              <button
+                key={`${friend.username}-${friend.objectId}`}
+                className={`friend-button ${
+                  selectedFriend?.objectId === friend.objectId ? "active" : ""
+                }`}
+                onClick={() => {
+                  setSelectedFriend(friend);
+                  fetchChatRoom(friend);
+                }}
+              >
+                <div className="friend-avatar">
+                  {getInitials(friend.username)}
+                </div>
+                {friend.username}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="chat-window">
+          {selectedRoom ? (
+            <>
+              <h3>Chat with {selectedFriend?.username}</h3>
+              <div className="chat-messages" ref={chatMessagesRef}>
+                {messages.map((msg) => (
+                  <div
+                    key={`${msg.id}-${msg.timestamp}`}
+                    className={`message ${
+                      msg.senderId === loggedUserId ? "sent" : "received"
+                    }`}
+                  >
+                    <strong>{msg.senderId}</strong>
+                    <div className="message-content">{msg.messageContent}</div>
+                    <span className="message-time">
+                      {formatMessageTime(msg.timestamp)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="chat-input">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type a message"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      sendMessage();
+                    }
+                  }}
+                />
+                <button onClick={sendMessage}>Send</button>
+              </div>
+            </>
+          ) : (
+            <div className="no-chat-selected">
+              <p>Select a friend to start messaging</p>
+            </div>
+          )}
+        </div>
+>>>>>>> 4e77c164fe132508d1b54630b330c53dac3a55bc
       </div>
     </div>
   );

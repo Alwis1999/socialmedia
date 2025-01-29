@@ -1,4 +1,5 @@
 .welcome-container {
+<<<<<<< HEAD
   background: linear-gradient(135deg, #1a73e8, #4285f4, #0d47a1);
   background-size: 400% 400%;
   color: white;
@@ -145,4 +146,98 @@
 
 .loading {
   animation: pulse 1.5s infinite;
+=======
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  background-size: 200% 200%;
+  color: white;
+  min-height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-position 0.5s ease;
+}
+
+.welcome-container:hover {
+  background-position: 100% 100%;
+}
+
+.logo {
+    width: 150px; /* Adjust logo size */
+    margin-bottom: 30px; /* Increased bottom margin for spacing between logo and message */
+    margin-top: 20px; /* Optional: Add a small margin above the logo */
+  }
+
+  h1.display-4 {
+    font-size: 3.5rem; 
+    font-weight: 700;  
+    margin-bottom: 15px; /* Reduced space between heading and logo for better alignment */
+    font-family: 'Arial', sans-serif;
+  }
+
+p.lead {
+  font-size: 1.5rem;
+  font-weight: 300;  /* Light weight for the loading message */
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.description {
+  font-size: 1.25rem; /* Slightly larger for readability */
+  color: #f8f9fa;
+  margin: 20px 0;
+  line-height: 1.8; /* Increased line height for better spacing */
+  max-width: 700px; /* Limit width to make it look better on large screens */
+  margin-left: auto;
+  margin-right: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button {
+  border: none;
+  padding: 18px 45px; /* Increased padding for larger buttons */
+  border-radius: 30px;
+  font-size: 1.5rem; /* Bigger font size for better button text visibility */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 200px; /* Set both buttons to same width */
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Primary button (Sign Up) */
+button.btn-primary {
+  background-color: #4CAF50; /* Green */
+}
+
+button.btn-primary:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+/* Secondary button (Login) */
+button.btn-secondary {
+  background-color: #4CAF50; /* Blue */
+}
+
+button.btn-secondary:hover {
+  background-color: #1976D2; /* Darker blue */
+}
+
+.button-container {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Added gap between buttons */
+>>>>>>> 4e77c164fe132508d1b54630b330c53dac3a55bc
 }
