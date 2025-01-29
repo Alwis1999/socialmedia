@@ -125,6 +125,49 @@ const ChatRoomComponent: React.FC = () => {
     }
   };
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  return (
+    <div className="chat-room-container">
+      <h2>Friends</h2>
+      {friends.map((friend) => (
+        <button
+          key={`${friend.username}-${friend.objectId}`} // Unique combination
+          onClick={() => {
+            setSelectedFriend(friend);
+            fetchChatRoom(friend);
+          }}
+        >
+          {friend.username}
+        </button>
+      ))}
+      <div className="chat-window">
+        {selectedRoom ? (
+          <>
+            <h3>Chat with {selectedFriend?.username}</h3>
+            <div className="chat-messages" ref={chatMessagesRef}>
+              {messages.map((msg) => (
+                <div key={`${msg.id}-${msg.timestamp}`} className="message">
+                  <strong>{msg.senderId}:</strong> {msg.messageContent}
+                </div>
+              ))}
+            </div>
+            <div className="chat-input">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type a message"
+              />
+              <button onClick={sendMessage}>Send</button>
+            </div>
+          </>
+        ) : (
+          <p>Select a friend to start messaging.</p>
+        )}
+=======
+>>>>>>> 3fbec058762d04386dbff9150d439978da76e527
   const getInitials = (username: string) => {
     return username
       .split(" ")
@@ -222,6 +265,10 @@ const ChatRoomComponent: React.FC = () => {
             </div>
           )}
         </div>
+<<<<<<< HEAD
+=======
+>>>>>>> 4e77c164fe132508d1b54630b330c53dac3a55bc
+>>>>>>> 3fbec058762d04386dbff9150d439978da76e527
       </div>
     </div>
   );
