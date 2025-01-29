@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/UserPosts.css";
+// Import icons from react-icons
+import { FaRegComment, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { BiTime } from "react-icons/bi";
+import { BsPencilSquare } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+import { handleSessionExpired, checkAuthError } from "../utils/auth";
 
 interface Comment {
   id: string | null;
@@ -22,6 +28,8 @@ const UserPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedComments, setExpandedComments] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const formatDate = (dateArray: number[]) => {
     const date = new Date(
@@ -41,28 +49,56 @@ const UserPosts: React.FC = () => {
     });
   };
 
+  // Toggle comments visibility
+  const toggleComments = (postId: string) => {
+    setExpandedComments((prev) =>
+      prev.includes(postId)
+        ? prev.filter((id) => id !== postId)
+        : [...prev, postId]
+    );
+  };
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("token");
+
+        // Debug token
+        console.log("Token exists:", !!token);
+        if (token) {
+          console.log("Token format:", token.substring(0, 20) + "...");
+        }
+
+        if (!token) {
+          handleSessionExpired(navigate);
+          return;
+        }
+
         const response = await axios.get(
           "http://localhost:8080/api/posts/myposts",
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
           }
         );
         setPosts(response.data);
-      } catch (err) {
-        setError("Failed to fetch posts. Please try again later.");
+      } catch (err: any) {
+        if (!checkAuthError(err, navigate)) {
+          setError(
+            `Failed to fetch posts: ${
+              err.response?.data?.message || err.message
+            }`
+          );
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchPosts();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -79,11 +115,28 @@ const UserPosts: React.FC = () => {
 
   return (
     <div className="posts-container">
-      <h2>Your Posts</h2>
+      <div className="posts-header">
+        <h2>Your Posts</h2>
+        <button
+          className="new-post-btn"
+          onClick={() => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+              handleSessionExpired(navigate);
+              return;
+            }
+            navigate("/posts/create");
+          }}
+        >
+          <BsPencilSquare /> New Post
+        </button>
+      </div>
       {posts.length === 0 ? (
         <div className="no-posts">
           <p>You haven't created any posts yet.</p>
-          <button className="create-post-btn">Create Your First Post</button>
+          <button className="create-post-btn">
+            <BsPencilSquare /> Create Your First Post
+          </button>
         </div>
       ) : (
         <div className="posts-list">
@@ -96,12 +149,29 @@ const UserPosts: React.FC = () => {
                   </div>
                   <span className="username">{post.user}</span>
                 </div>
-                <span className="post-date">{formatDate(post.createdAt)}</span>
+                <span className="post-date">
+                  <BiTime /> {formatDate(post.createdAt)}
+                </span>
               </div>
               <div className="post-content">{post.content}</div>
-              <div className="post-comments">
-                {post.comments && post.comments.length > 0 && (
-                  <>
+              <div className="post-footer">
+                <button
+                  className="comments-toggle"
+                  onClick={() => toggleComments(post.id)}
+                >
+                  <FaRegComment />
+                  <span>{post.comments?.length || 0} Comments</span>
+                  {expandedComments.includes(post.id) ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
+                </button>
+              </div>
+              {expandedComments.includes(post.id) &&
+                post.comments &&
+                post.comments.length > 0 && (
+                  <div className="post-comments">
                     <h4>Comments ({post.comments.length})</h4>
                     <div className="comments-list">
                       {post.comments.map((comment, index) => (
@@ -114,7 +184,7 @@ const UserPosts: React.FC = () => {
                               <span className="username">{comment.user}</span>
                             </div>
                             <span className="comment-date">
-                              {formatDate(comment.commentAt)}
+                              <BiTime /> {formatDate(comment.commentAt)}
                             </span>
                           </div>
                           <div className="comment-content">
@@ -123,9 +193,8 @@ const UserPosts: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                  </>
+                  </div>
                 )}
-              </div>
             </div>
           ))}
         </div>

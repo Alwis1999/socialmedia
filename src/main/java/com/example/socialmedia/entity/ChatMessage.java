@@ -1,9 +1,5 @@
 package com.example.socialmedia.entity;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 3fbec058762d04386dbff9150d439978da76e527
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -77,28 +73,4 @@ public class ChatMessage {
     public void setChatRoomId(String chatRoomId) {
         this.chatRoomId = chatRoomId;
     }
-<<<<<<< HEAD
-=======
-=======
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.time.LocalDateTime;
-
-@Document
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ChatMessage {
-    @Id
-    private String id;
-    private String senderId; // ID of the sender
-    private String receiverId; // ID of the receiver
-    private String message;
-    private LocalDateTime timestamp;
->>>>>>> 4e77c164fe132508d1b54630b330c53dac3a55bc
->>>>>>> 3fbec058762d04386dbff9150d439978da76e527
 }

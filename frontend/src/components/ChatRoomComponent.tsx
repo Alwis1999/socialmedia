@@ -116,58 +116,15 @@ const ChatRoomComponent: React.FC = () => {
         senderId: loggedUserId,
         messageContent: input,
         receiverId: selectedFriend.objectId,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString(), // This ensures proper ISO format
         chatRoomId: selectedRoom.id,
       };
-      socket.send(JSON.stringify(chatMessage)); // Send message via WebSocket
-      setMessages([...messages, chatMessage]); // Update messages in the state
-      setInput(""); // Clear input field
+      socket.send(JSON.stringify(chatMessage));
+      setMessages([...messages, chatMessage]);
+      setInput("");
     }
   };
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-  return (
-    <div className="chat-room-container">
-      <h2>Friends</h2>
-      {friends.map((friend) => (
-        <button
-          key={`${friend.username}-${friend.objectId}`} // Unique combination
-          onClick={() => {
-            setSelectedFriend(friend);
-            fetchChatRoom(friend);
-          }}
-        >
-          {friend.username}
-        </button>
-      ))}
-      <div className="chat-window">
-        {selectedRoom ? (
-          <>
-            <h3>Chat with {selectedFriend?.username}</h3>
-            <div className="chat-messages" ref={chatMessagesRef}>
-              {messages.map((msg) => (
-                <div key={`${msg.id}-${msg.timestamp}`} className="message">
-                  <strong>{msg.senderId}:</strong> {msg.messageContent}
-                </div>
-              ))}
-            </div>
-            <div className="chat-input">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a message"
-              />
-              <button onClick={sendMessage}>Send</button>
-            </div>
-          </>
-        ) : (
-          <p>Select a friend to start messaging.</p>
-        )}
-=======
->>>>>>> 3fbec058762d04386dbff9150d439978da76e527
   const getInitials = (username: string) => {
     return username
       .split(" ")
@@ -178,24 +135,51 @@ const ChatRoomComponent: React.FC = () => {
   };
 
   const formatMessageTime = (timestamp: string) => {
-    const date = new Date(timestamp);
+    try {
+      // Parse the ISO string to Date object
+      const date = new Date(timestamp);
 
-    // Format date
-    const dateStr = date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        console.error("Invalid date:", timestamp);
+        return "Invalid date";
+      }
 
-    // Format time
-    const timeStr = date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
+      // Get current date for comparison
+      const now = new Date();
+      const isToday = date.toDateString() === now.toDateString();
+      const isYesterday =
+        new Date(now.setDate(now.getDate() - 1)).toDateString() ===
+        date.toDateString();
 
-    return `${dateStr} ${timeStr}`;
+      // Format time
+      const timeStr = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      // If message is from today, just show time
+      if (isToday) {
+        return timeStr;
+      }
+
+      // If message is from yesterday, show "Yesterday" with time
+      if (isYesterday) {
+        return `Yesterday ${timeStr}`;
+      }
+
+      // Otherwise show full date with time
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid date";
+    }
   };
 
   return (
@@ -238,7 +222,11 @@ const ChatRoomComponent: React.FC = () => {
                   >
                     <strong>{msg.senderId}</strong>
                     <div className="message-content">{msg.messageContent}</div>
-                    <span className="message-time">
+                    <span
+                      className={`message-time ${
+                        !msg.timestamp ? "error" : ""
+                      }`}
+                    >
                       {formatMessageTime(msg.timestamp)}
                     </span>
                   </div>
@@ -265,10 +253,6 @@ const ChatRoomComponent: React.FC = () => {
             </div>
           )}
         </div>
-<<<<<<< HEAD
-=======
->>>>>>> 4e77c164fe132508d1b54630b330c53dac3a55bc
->>>>>>> 3fbec058762d04386dbff9150d439978da76e527
       </div>
     </div>
   );
