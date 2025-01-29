@@ -1,12 +1,15 @@
 package com.example.socialmedia.service;
 
+import com.example.socialmedia.dto.FriendDetailsDTO;
 import com.example.socialmedia.entity.BaseFile;
 import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class FriendService extends BaseFile {
@@ -17,7 +20,6 @@ public class FriendService extends BaseFile {
     public String sendFriendRequest(String toUserId) {
         String fromUserId = loggedUserId();
         System.out.println("\n\n\n"+toUserId+"\n\n\n");
-        System.out.println("\n\n\n"+fromUserId+"\n\n\n");
 
         if (toUserId == null || fromUserId == null) {
             throw new IllegalArgumentException("User IDs cannot be null");
@@ -58,5 +60,20 @@ public class FriendService extends BaseFile {
     public Set<String> getFriendRequests() {
         UserInfo user = loggerUser();
         return user.getFriendsRequest();
+    }
+
+    /*public Set<String> getFriends() {
+        UserInfo user = loggerUser();
+        return user.getFriends();
+    }*/
+
+    public List<FriendDetailsDTO> getMyFriends() {
+        UserInfo user = loggerUser(); // Assuming loggerUser() retrieves the logged-in user
+        return user.getFriends().stream()
+                .map(friendId -> userInfoRepository.findById(friendId)
+                        .map(friend -> new FriendDetailsDTO(friend.getUsername(), friend.getId()))
+                        .orElse(null))
+                .filter(friend -> friend != null) // Remove null entries if any user is not found
+                .collect(Collectors.toList());
     }
 }

@@ -7,6 +7,8 @@ public class FriendRequestDTO {
 
     private String userId;
 
+    public FriendRequestDTO() {}
+
     public FriendRequestDTO(String userId) {
         this.userId = userId;
     }
