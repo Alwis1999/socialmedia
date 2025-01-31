@@ -73,4 +73,10 @@ public class PostController {
         postService.addCommentToPost(postId, comment);
         return "Comment added successfully";
     }
+
+    // Get a feed for the logged user
+    @GetMapping("/myfeed")
+    public List<Post> getMyFeed() {
+        return postService.getMyFeed();
+    }
 }

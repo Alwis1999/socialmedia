@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@Service
 public class JwtService {
 
     // Replace this with a secure key in a real application, ideally fetched from environment variables
@@ -77,5 +79,11 @@ public class JwtService {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    // Validate the token
+    public Boolean validateToken(String token) {
+        final String username = extractUsername(token);
+        return !isTokenExpired(token); // You can also add any other validation logic here if necessary
     }
 }

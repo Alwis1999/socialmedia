@@ -9,6 +9,7 @@ import com.example.socialmedia.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +93,35 @@ public class PostService extends BaseFile {
     public boolean canViewPosts(String postOwner) {
         UserInfo loggedInUser = loggerUser();
         return isFriend(postOwner); // Use the `isFriend` method you already have.
+    }
+
+    public List<Post> getMyFeed() {
+        String loggedInUsername = loggedUsername();
+
+        // Retrieve all posts by friends and the logged-in user
+        List<Post> posts = new ArrayList<>(postRepository.findAll().stream()
+                .filter(post -> post.getUser().equals(loggedInUsername) || isFriend(post.getUser()))
+                .toList());
+
+        // Sort posts by the most recent activity (comments or updates)
+        posts.sort((p1, p2) -> {
+            LocalDateTime lastActivity1 = getLastActivityTime(p1);
+            LocalDateTime lastActivity2 = getLastActivityTime(p2);
+            return lastActivity2.compareTo(lastActivity1); // Descending order
+        });
+
+        return posts;
+    }
+
+    private LocalDateTime getLastActivityTime(Post post) {
+        LocalDateTime lastCommentTime = post.getComments() != null && !post.getComments().isEmpty() ?
+                post.getComments().stream()
+                        .map(Comment::getCommentAt)
+                        .max(LocalDateTime::compareTo)
+                        .orElse(post.getCreatedAt()) : post.getCreatedAt();
+
+        // Use the later of the last comment time or the post creation time
+        return lastCommentTime.isAfter(post.getCreatedAt()) ? lastCommentTime : post.getCreatedAt();
     }
 
     
