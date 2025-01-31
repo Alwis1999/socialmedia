@@ -13,11 +13,8 @@ const Layout: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // Clear all stored data
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-
-    // Redirect to login page
     navigate("/auth/login");
   };
 
@@ -31,6 +28,10 @@ const Layout: React.FC = () => {
           {!isCollapsed && <h1>EchoNet</h1>}
         </div>
         <div className="nav-links">
+          <NavLink to="/feed" className="nav-item" title="My Feed">
+            <BiNews />
+            {!isCollapsed && <span>My Feed</span>}
+          </NavLink>
           <NavLink to="/posts/myposts" className="nav-item" title="My Posts">
             <BiHomeAlt />
             {!isCollapsed && <span>My Posts</span>}
@@ -42,10 +43,6 @@ const Layout: React.FC = () => {
           <NavLink to="/friends/myfriends" className="nav-item" title="Friends">
             <BiUser />
             {!isCollapsed && <span>Friends</span>}
-          </NavLink>
-          <NavLink to="/feed" className="nav-item" title="My Feed">
-            <BiNews />
-            {!isCollapsed && <span>My Feed</span>}
           </NavLink>
         </div>
         <div className="sidebar-footer">

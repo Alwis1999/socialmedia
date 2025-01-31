@@ -30,7 +30,7 @@ const Login: React.FC = () => {
       localStorage.setItem("token", response.data);
       localStorage.setItem("username", username);
 
-      window.location.href = "/dashboard";
+      window.location.href = "/feed";
     } catch (error) {
       setError(
         "Login failed. Please check your username and password and try again."
