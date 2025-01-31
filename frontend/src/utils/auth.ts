@@ -10,14 +10,18 @@ export const handleSessionExpired = (navigate: NavigateFunction) => {
 
 export const refreshToken = async () => {
   try {
-    const response = await axios.post('http://localhost:8080/auth/refresh', {}, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+    const response = await axios.post(
+      "http://localhost:8080/auth/refresh",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    });
-    
+    );
+
     const newToken = response.data.token;
-    localStorage.setItem('token', newToken);
+    localStorage.setItem("token", newToken);
     return newToken;
   } catch (error) {
     throw error;
@@ -43,7 +47,7 @@ export const handleLogout = (navigate: NavigateFunction) => {
   // Clear all authentication data
   localStorage.removeItem("token");
   localStorage.removeItem("username");
-  
+
   // Redirect to login
   navigate("/auth/login");
 };
@@ -59,4 +63,4 @@ export const requireAuth = (navigate: NavigateFunction) => {
     return false;
   }
   return true;
-}; 
+};

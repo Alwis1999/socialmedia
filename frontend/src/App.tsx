@@ -17,6 +17,7 @@ import Layout from "./components/Layout";
 import { isAuthenticated } from "./utils/auth";
 import Feed from "./components/Feed";
 
+// ProtectedRoute component to handle authentication
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated() ? <>{children}</> : <Navigate to="/auth/login" />;
 };

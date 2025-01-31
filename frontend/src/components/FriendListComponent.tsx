@@ -15,6 +15,7 @@ const FriendListComponent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const BASE_URL = "http://localhost:8080"; // Replace with your actual base URL
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -25,14 +26,11 @@ const FriendListComponent: React.FC = () => {
           return;
         }
 
-        const response = await axios.get(
-          "http://localhost:8080/api/friends/myfriends",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${BASE_URL}/api/friends/myfriends`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setFriends(response.data);
       } catch (err: any) {
         if (!checkAuthError(err, navigate)) {
