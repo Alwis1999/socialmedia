@@ -42,11 +42,12 @@
 
 .no-friends {
   text-align: center;
-  padding: 3rem;
+  padding: 2rem;
   background: #f8f9fa;
   border-radius: 12px;
   border: 2px dashed #dee2e6;
   color: #666;
+  margin: 1rem 0;
 }
 
 .no-friends-icon {
@@ -102,6 +103,77 @@
   color: #2c3e50;
 }
 
+.request-button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.request-button.send {
+  background: #1a73e8;
+  color: white;
+  border: none;
+}
+
+.request-button.pending {
+  background: #f1f3f4;
+  color: #5f6368;
+  border: 1px solid #dadce0;
+  cursor: not-allowed;
+}
+
+.request-button:hover:not(.pending) {
+  background: #1557b0;
+  transform: translateY(-1px);
+}
+
+.request-button.pending:hover {
+  background: #f1f3f4;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .friends-container {
+    margin: 1rem auto;
+  }
+
+  .friends-list {
+    grid-template-columns: 1fr;
+  }
+
+  .friend-card {
+    padding: 0.8rem;
+  }
+
+  .search-wrapper {
+    max-width: 100%;
+  }
+  
+  .search-input {
+    font-size: 0.9rem;
+    padding: 10px 15px 10px 40px;
+  }
+}
+
+.friends-section,
+.registered-users-section {
+  margin-bottom: 3rem;
+}
+
+.friends-section h2,
+.registered-users-section h2 {
+  color: #1a73e8;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #e8f0fe;
+  padding-bottom: 0.5rem;
+}
+
 .chat-button {
   display: flex;
   align-items: center;
@@ -125,16 +197,77 @@
   font-size: 1.2rem;
 }
 
-@media (max-width: 768px) {
-  .friends-container {
-    margin: 1rem auto;
-  }
+.search-container {
+  margin-bottom: 2rem;
+}
 
-  .friends-list {
-    grid-template-columns: 1fr;
-  }
+.search-wrapper {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
 
-  .friend-card {
-    padding: 0.8rem;
-  }
+.search-input {
+  width: 100%;
+  padding: 12px 20px 12px 45px;
+  font-size: 1rem;
+  border: 2px solid #e8f0fe;
+  border-radius: 30px;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5f6368;
+  font-size: 1.2rem;
+}
+
+.friend-requests-section {
+  margin-bottom: 3rem;
+}
+
+.friend-requests-section h2 {
+  color: #1a73e8;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #e8f0fe;
+  padding-bottom: 0.5rem;
+}
+
+.request-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.accept-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: #34a853;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.accept-button:hover {
+  background: #2d8e47;
+  transform: translateY(-1px);
+}
+
+.accept-button svg {
+  font-size: 1.2rem;
 } 

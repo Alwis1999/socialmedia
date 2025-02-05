@@ -1,5 +1,6 @@
 package com.example.socialmedia.service;
 
+import com.example.socialmedia.dto.FriendDetailsDTO;
 import com.example.socialmedia.dto.SignUpDTO;
 import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.repository.UserInfoRepository;
@@ -51,5 +52,13 @@ public class UserInfoService implements UserDetailsService {
         return "User Added Successfully";
     }
 
-
+    public FriendDetailsDTO getUserDetails(String userId) {
+        return repository.findById(userId)
+            .map(user -> new FriendDetailsDTO(
+                user.getUsername(), 
+                user.getId(),
+                false  // requestSent is false by default
+            ))
+            .orElse(null);
+    }
 }

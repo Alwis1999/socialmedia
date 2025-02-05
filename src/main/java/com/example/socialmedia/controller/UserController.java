@@ -34,6 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
+    @ResponseBody
     public ResponseEntity<String> signUp(@RequestBody SignUpDTO signUpDTO) {
         try {
             String result = userInfoService.registerNewUser(signUpDTO);

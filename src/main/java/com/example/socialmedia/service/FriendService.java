@@ -17,29 +17,48 @@ public class FriendService extends BaseFile {
     @Autowired
     private UserInfoRepository userInfoRepository;
 
+    public List<FriendDetailsDTO> getRegisteredUsers() {
+        String currentUserId = loggedUserId();
+        return userInfoRepository.findAll().stream()
+                .filter(user -> !user.getId().equals(currentUserId)) // Exclude current user
+                .filter(user -> !user.getFriends().contains(currentUserId)) // Exclude existing friends
+                .map(user -> new FriendDetailsDTO(
+                        user.getUsername(),
+                        user.getId(),
+                        user.getFriendsRequest().contains(currentUserId) // Add request status
+                ))
+                .collect(Collectors.toList());
+    }
+
     public String sendFriendRequest(String toUserId) {
         String fromUserId = loggedUserId();
-        System.out.println("\n\n\n"+toUserId+"\n\n\n");
 
         if (toUserId == null || fromUserId == null) {
             throw new IllegalArgumentException("User IDs cannot be null");
         }
-        UserInfo toUser = userInfoRepository.findById(toUserId).orElseThrow(() ->
-                new RuntimeException("User not found"));
-        if(toUser.getFriendsRequest().contains(fromUserId)) {
+
+        // Get both users
+        UserInfo fromUser = userInfoRepository.findById(fromUserId)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+        UserInfo toUser = userInfoRepository.findById(toUserId)
+                .orElseThrow(() -> new RuntimeException("Target user not found"));
+
+        // Check if request already exists
+        if (toUser.getFriendsRequest().contains(fromUserId)) {
             return "Friend request already sent";
         }
+
+        // Add request to recipient's friendsRequest set
         toUser.getFriendsRequest().add(fromUserId);
         userInfoRepository.save(toUser);
 
-        return "Friend request sent!!!";
-
+        return "Friend request sent successfully";
     }
 
     public String acceptFriendRequest(String fromUserId) {
         UserInfo user = loggerUser();
-        UserInfo fromUser = userInfoRepository.findById(fromUserId).orElseThrow(() ->
-                new RuntimeException("Requested user not found"));
+        UserInfo fromUser = userInfoRepository.findById(fromUserId)
+                .orElseThrow(() -> new RuntimeException("Requested user not found"));
 
         if (!user.getFriendsRequest().contains(fromUserId)) {
             return "No such friend request!!!!";
@@ -62,18 +81,24 @@ public class FriendService extends BaseFile {
         return user.getFriendsRequest();
     }
 
-    /*public Set<String> getFriends() {
-        UserInfo user = loggerUser();
-        return user.getFriends();
-    }*/
+    /*
+     * public Set<String> getFriends() {
+     * UserInfo user = loggerUser();
+     * return user.getFriends();
+     * }
+     */
 
     public List<FriendDetailsDTO> getMyFriends() {
-        UserInfo user = loggerUser(); // Assuming loggerUser() retrieves the logged-in user
+        UserInfo user = loggerUser();
         return user.getFriends().stream()
                 .map(friendId -> userInfoRepository.findById(friendId)
-                        .map(friend -> new FriendDetailsDTO(friend.getUsername(), friend.getId()))
+                        .map(friend -> new FriendDetailsDTO(
+                                friend.getUsername(),
+                                friend.getId(),
+                                false // For existing friends, requestSent is always false
+                        ))
                         .orElse(null))
-                .filter(friend -> friend != null) // Remove null entries if any user is not found
+                .filter(friend -> friend != null)
                 .collect(Collectors.toList());
     }
 }
