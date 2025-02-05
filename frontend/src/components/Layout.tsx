@@ -74,7 +74,9 @@ const Layout: React.FC = () => {
         </div>
       </nav>
       <main className={`main-content ${isCollapsed ? "expanded" : ""}`}>
-        <Outlet />
+        <div className="content-container">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

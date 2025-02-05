@@ -31,6 +31,13 @@ const FriendListComponent: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
+  const filteredUsers = registeredUsers.filter(
+    (user) =>
+      user.username.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !friends.some((friend) => friend.objectId === user.objectId) &&
+      !friendRequests.some((request) => request.objectId === user.objectId)
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -137,21 +144,6 @@ const FriendListComponent: React.FC = () => {
     }
   };
 
-  // Update the filter function to handle undefined usernames
-  const filterByUsername = (username: string | undefined, query: string) => {
-    if (!username) return false;
-    return username.toLowerCase().includes(query.toLowerCase());
-  };
-
-  // Initialize arrays with empty arrays if they're undefined
-  const filteredFriends = (friends || []).filter((friend) =>
-    filterByUsername(friend?.username, searchQuery)
-  );
-
-  const filteredRegisteredUsers = (registeredUsers || []).filter((user) =>
-    filterByUsername(user?.username, searchQuery)
-  );
-
   const getInitial = (username: string | undefined) => {
     return username ? username[0].toUpperCase() : "?";
   };
@@ -227,7 +219,7 @@ const FriendListComponent: React.FC = () => {
       {/* Friends List Section */}
       <section className="friends-section">
         <h2>My Friends</h2>
-        {!filteredFriends || filteredFriends.length === 0 ? (
+        {!friends || friends.length === 0 ? (
           <div className="no-friends">
             {searchQuery ? (
               <p>No friends match your search.</p>
@@ -240,40 +232,46 @@ const FriendListComponent: React.FC = () => {
           </div>
         ) : (
           <div className="friends-list">
-            {filteredFriends.map((friend) => (
-              <div key={friend.objectId} className="friend-card">
-                <div className="friend-info">
-                  <div className="friend-avatar">
-                    {getInitial(friend.username)}
+            {friends
+              .filter((friend) =>
+                friend.username
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              )
+              .map((friend) => (
+                <div key={friend.objectId} className="friend-card">
+                  <div className="friend-info">
+                    <div className="friend-avatar">
+                      {getInitial(friend.username)}
+                    </div>
+                    <span className="friend-name">
+                      {friend.username || "Unknown User"}
+                    </span>
                   </div>
-                  <span className="friend-name">
-                    {friend.username || "Unknown User"}
-                  </span>
+                  <button
+                    className="chat-button"
+                    onClick={() => handleChatClick(friend.objectId)}
+                    title="Start chat"
+                  >
+                    <BiMessageSquare />
+                    <span>Chat</span>
+                  </button>
                 </div>
-                <button
-                  className="chat-button"
-                  onClick={() => handleChatClick(friend.objectId)}
-                  title="Start chat"
-                >
-                  <BiMessageSquare />
-                  <span>Chat</span>
-                </button>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </section>
 
       {/* Registered Users Section */}
-      <section className="registered-users-section">
+      <section className="other-users-section">
         <h2>Other Users</h2>
         <div className="friends-list">
-          {!filteredRegisteredUsers || filteredRegisteredUsers.length === 0 ? (
+          {!filteredUsers || filteredUsers.length === 0 ? (
             <div className="no-friends">
               <p>No users match your search.</p>
             </div>
           ) : (
-            filteredRegisteredUsers.map((user) => (
+            filteredUsers.map((user) => (
               <div key={user.objectId} className="friend-card">
                 <div className="friend-info">
                   <div className="friend-avatar">

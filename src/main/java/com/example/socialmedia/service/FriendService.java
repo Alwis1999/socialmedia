@@ -17,17 +17,21 @@ public class FriendService extends BaseFile {
     @Autowired
     private UserInfoRepository userInfoRepository;
 
+    @Autowired
+    private UserInfoService userInfoService;
+
     public List<FriendDetailsDTO> getRegisteredUsers() {
-        String currentUserId = loggedUserId();
+        UserInfo currentUser = userInfoService.getLoggedInUser();
+        Set<String> friendIds = currentUser.getFriends();
+        
         return userInfoRepository.findAll().stream()
-                .filter(user -> !user.getId().equals(currentUserId)) // Exclude current user
-                .filter(user -> !user.getFriends().contains(currentUserId)) // Exclude existing friends
-                .map(user -> new FriendDetailsDTO(
-                        user.getUsername(),
-                        user.getId(),
-                        user.getFriendsRequest().contains(currentUserId) // Add request status
-                ))
-                .collect(Collectors.toList());
+            .filter(user -> !user.getId().equals(currentUser.getId())) // Exclude current user
+            .filter(user -> !friendIds.contains(user.getId())) // Exclude friends
+            .map(user -> {
+                boolean requestSent = user.getFriendsRequest().contains(currentUser.getId());
+                return new FriendDetailsDTO(user.getUsername(), user.getId(), requestSent);
+            })
+            .collect(Collectors.toList());
     }
 
     public String sendFriendRequest(String toUserId) {

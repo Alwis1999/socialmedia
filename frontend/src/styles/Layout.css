@@ -1,19 +1,22 @@
 .app-layout {
   display: flex;
   min-height: 100vh;
+  justify-content: center;
 }
 
 .sidebar {
-  width: 260px;
-  background: white;
-  border-right: 1px solid #e0e0e0;
-  padding: 1.5rem;
-  position: fixed;
-  height: 100vh;
+  width: 250px;
+  background-color: #fff;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  border-right: 1px solid #e0e0e0;
+  transition: width 0.3s ease;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000;
 }
 
 .sidebar.collapsed {
@@ -104,15 +107,18 @@
 
 .main-content {
   flex: 1;
-  margin-left: 260px;
+  max-width: 1200px;
   padding: 2rem;
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  display: flex;
+  justify-content: center;
   background: #f8f9fa;
   min-height: 100vh;
-  transition: margin-left 0.3s ease;
 }
 
 .main-content.expanded {
-  margin-left: 70px;
+  margin-left: 80px;
 }
 
 .logout-btn {
@@ -156,49 +162,20 @@
   border-top: 1px solid #eee;
 }
 
+.content-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 @media (max-width: 768px) {
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: fixed;
-    bottom: 0;
-    top: auto;
-    padding: 0.5rem;
-    z-index: 1000;
-  }
-
-  .sidebar.collapsed {
-    width: 100%;
-    padding: 0.5rem;
-  }
-
-  .logo-container {
-    display: none;
-  }
-
-  .nav-links {
-    flex-direction: row;
-    justify-content: space-around;
-  }
-
-  .nav-item {
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .nav-item span {
-    font-size: 0.7rem;
-  }
-
-  .toggle-button {
-    display: none;
+    width: 80px;
   }
 
   .main-content {
-    margin-left: 0;
-    margin-bottom: 70px;
+    margin-left: 80px;
+    padding: 1rem;
   }
 
   .main-content.expanded {
@@ -223,5 +200,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .content-container {
+    max-width: 100%;
   }
 } 
