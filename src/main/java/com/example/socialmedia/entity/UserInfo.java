@@ -1,7 +1,5 @@
 package com.example.socialmedia.entity;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +8,7 @@ import org.springframework.data.annotation.Id;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.time.LocalDateTime;
 
 @Document
 @Data
@@ -27,5 +26,7 @@ public class UserInfo {
     // Friends and friend request
     private Set<String> friends = new HashSet<>(); // friends user IDs
     private Set<String> friendsRequest = new HashSet<>(); // friends request
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { BiHomeAlt, BiMessageSquare, BiUser, BiNews } from "react-icons/bi";
+import {
+  BiHomeAlt,
+  BiMessageSquare,
+  BiUser,
+  BiNews,
+  BiUserCircle,
+} from "react-icons/bi";
 import { FiChevronLeft, FiChevronRight, FiLogOut } from "react-icons/fi";
 import "../styles/Layout.css";
 
@@ -43,6 +49,10 @@ const Layout: React.FC = () => {
           <NavLink to="/friends/myfriends" className="nav-item" title="Friends">
             <BiUser />
             {!isCollapsed && <span>Friends</span>}
+          </NavLink>
+          <NavLink to="/profile" className="nav-item" title="Profile">
+            <BiUserCircle />
+            {!isCollapsed && <span>Profile</span>}
           </NavLink>
         </div>
         <div className="sidebar-footer">

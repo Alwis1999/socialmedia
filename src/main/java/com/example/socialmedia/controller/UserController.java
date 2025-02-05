@@ -3,6 +3,7 @@ package com.example.socialmedia.controller;
 import com.example.socialmedia.dto.AuthRequest;
 import com.example.socialmedia.dto.AuthResponse;
 import com.example.socialmedia.dto.SignUpDTO;
+import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.service.JwtService;
 import com.example.socialmedia.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173/")
 @RestController
@@ -102,5 +106,21 @@ public class UserController {
             }
         }
         throw new RuntimeException("Invalid refresh token");
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserProfile() {
+        try {
+            UserInfo user = userInfoService.getLoggedInUser();
+            Map<String, Object> profileData = new HashMap<>();
+            profileData.put("username", user.getUsername());
+            profileData.put("friendsCount", user.getFriends().size());
+            profileData.put("createdAt", user.getCreatedAt());
+
+            return ResponseEntity.ok(profileData);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching profile data: " + e.getMessage());
+        }
     }
 }

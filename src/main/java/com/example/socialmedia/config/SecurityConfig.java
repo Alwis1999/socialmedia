@@ -74,6 +74,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/ws/**", "/ws").permitAll()
+                        .requestMatchers("/api/user/profile").authenticated()
                         .requestMatchers("/api/posts/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()

@@ -5,6 +5,7 @@ import com.example.socialmedia.dto.SignUpDTO;
 import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -60,5 +61,14 @@ public class UserInfoService implements UserDetailsService {
                 false  // requestSent is false by default
             ))
             .orElse(null);
+    }
+
+    public UserInfo getLoggedInUser() {
+        // Get the username from the security context
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        // Find and return the user from the repository
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
