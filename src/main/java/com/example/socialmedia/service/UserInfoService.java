@@ -71,4 +71,8 @@ public class UserInfoService implements UserDetailsService {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
+    public void updateUser(UserInfo user) {
+        repository.save(user);
+    }
 }

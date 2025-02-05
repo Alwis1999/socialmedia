@@ -6,6 +6,7 @@ import {
   BiEnvelope,
   BiShield,
   BiCalendar,
+  BiLock,
 } from "react-icons/bi";
 import { handleSessionExpired } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,14 @@ const Profile: React.FC = () => {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +67,43 @@ const Profile: React.FC = () => {
 
     fetchProfileData();
   }, [navigate]);
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("New passwords don't match");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:8080/api/user/change-password",
+        {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setPasswordSuccess("Password updated successfully");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setShowPasswordChange(false);
+    } catch (err: any) {
+      setPasswordError(err.response?.data || "Failed to update password");
+    }
+  };
 
   if (loading) {
     return (
@@ -124,6 +170,80 @@ const Profile: React.FC = () => {
               </span>
             </div>
           </div>
+        </div>
+
+        <div className="password-section">
+          <button
+            className="change-password-btn"
+            onClick={() => setShowPasswordChange(!showPasswordChange)}
+          >
+            <BiLock /> Change Password
+          </button>
+
+          {showPasswordChange && (
+            <form onSubmit={handlePasswordChange} className="password-form">
+              <div className="form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordData({
+                      ...passwordData,
+                      currentPassword: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) =>
+                    setPasswordData({
+                      ...passwordData,
+                      newPassword: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) =>
+                    setPasswordData({
+                      ...passwordData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+              {passwordError && (
+                <div className="error-message">{passwordError}</div>
+              )}
+              {passwordSuccess && (
+                <div className="success-message">{passwordSuccess}</div>
+              )}
+              <div className="button-group">
+                <button type="submit" className="submit-btn">
+                  Update Password
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowPasswordChange(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
