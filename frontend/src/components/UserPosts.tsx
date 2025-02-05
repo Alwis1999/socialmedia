@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { BiTime, BiComment, BiUser } from "react-icons/bi";
+import { BsPencilSquare } from "react-icons/bs";
+import { handleSessionExpired, checkAuthError } from "../utils/auth";
 import "../styles/UserPosts.css";
+import axiosInstance from "../utils/axiosConfig"; // Import axiosInstance
 // Import icons from react-icons
 import { FaRegComment, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { BiTime } from "react-icons/bi";
-import { BsPencilSquare } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
-import { handleSessionExpired, checkAuthError } from "../utils/auth";
 
 interface Comment {
   id: string | null;
@@ -62,8 +62,6 @@ const UserPosts: React.FC = () => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        // Debug token
         console.log("Token exists:", !!token);
         if (token) {
           console.log("Token format:", token.substring(0, 20) + "...");
@@ -74,17 +72,10 @@ const UserPosts: React.FC = () => {
           return;
         }
 
-        const response = await axios.get(
-          "http://localhost:8080/api/posts/myposts",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await axiosInstance.get("/api/posts/myposts");
         setPosts(response.data);
       } catch (err: any) {
+        console.error("Error fetching posts:", err);
         if (!checkAuthError(err, navigate)) {
           setError(
             `Failed to fetch posts: ${

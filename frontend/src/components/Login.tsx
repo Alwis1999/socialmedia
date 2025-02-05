@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "../styles/Login.css";
+import { authService } from "../services/auth";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   // Check if there is saved login data in localStorage and pre-fill the form
   useEffect(() => {
@@ -22,19 +25,15 @@ const Login: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
-        username,
-        password,
-      });
-
-      localStorage.setItem("token", response.data);
-      localStorage.setItem("username", username);
-
-      window.location.href = "/feed";
-    } catch (error) {
-      setError(
-        "Login failed. Please check your username and password and try again."
-      );
+      await authService.login(username, password);
+      toast.success("Login successful!");
+      navigate("/feed");
+    } catch (error: any) {
+      console.error("Login error:", error);
+      const errorMessage =
+        error.response?.data || error.message || "Login failed";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -90,14 +89,18 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <button type="submit" className="submit-btn" disabled={isLoading}>
+          <button
+            type="submit"
+            className="submit-btn"
+            disabled={isLoading || !username || !password}
+          >
             {isLoading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <div className="signup-link">
           Don't have an account?
-          <a href="http://localhost:5173/auth/signup">Sign up now</a>
+          <a href="/auth/signup">Sign up now</a>
         </div>
       </div>
     </div>

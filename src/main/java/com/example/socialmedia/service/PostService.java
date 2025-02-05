@@ -7,6 +7,10 @@ import com.example.socialmedia.entity.UserInfo;
 import com.example.socialmedia.repository.PostRepository;
 import com.example.socialmedia.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +20,9 @@ import java.util.Optional;
 
 @Service
 public class PostService extends BaseFile {
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     private PostRepository postRepository;
@@ -54,7 +61,7 @@ public class PostService extends BaseFile {
 
     // Get post by user
     public List<Post> getPostByUser(String user) {
-        return postRepository.findByUser(user);
+        return postRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     // Update post
@@ -64,6 +71,7 @@ public class PostService extends BaseFile {
         post.setUser(postDetails.getUser());
         return postRepository.save(post);
     }
+
     public void deletePost(String id) {
         postRepository.deleteById(id);
     }
@@ -71,8 +79,7 @@ public class PostService extends BaseFile {
     public boolean isFriend(String postOwner) {
         UserInfo loggedInUser = loggerUser();
         Optional<UserInfo> postOwnerUser = userInfoRepository.findByUsername(postOwner);
-        return postOwnerUser.map(user ->
-                loggedInUser.getFriends().contains(user.getId())).orElse(false) ||
+        return postOwnerUser.map(user -> loggedInUser.getFriends().contains(user.getId())).orElse(false) ||
                 postOwner.equals(loggedInUser.getUsername());
     }
 
@@ -83,11 +90,18 @@ public class PostService extends BaseFile {
                 .toList();
     }
 
+    // Get logged user posts
     public List<Post> getMyPosts() {
-        String loggedInUsername = loggedUsername();
-        return postRepository.findAll().stream()
-                .filter(post -> post.getUser().equals(loggedInUsername) || isFriend(post.getUser()))
-                .toList();
+        String loggedUsername = loggedUsername(); // Get the logged-in username from BaseFile
+
+        // Create query to find posts by logged user
+        Query query = new Query();
+        query.addCriteria(Criteria.where("user").is(loggedUsername));
+
+        // Sort by createdAt in descending order (newest first)
+        query.with(Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return mongoTemplate.find(query, Post.class);
     }
 
     public boolean canViewPosts(String postOwner) {
@@ -114,15 +128,15 @@ public class PostService extends BaseFile {
     }
 
     private LocalDateTime getLastActivityTime(Post post) {
-        LocalDateTime lastCommentTime = post.getComments() != null && !post.getComments().isEmpty() ?
-                post.getComments().stream()
+        LocalDateTime lastCommentTime = post.getComments() != null && !post.getComments().isEmpty()
+                ? post.getComments().stream()
                         .map(Comment::getCommentAt)
                         .max(LocalDateTime::compareTo)
-                        .orElse(post.getCreatedAt()) : post.getCreatedAt();
+                        .orElse(post.getCreatedAt())
+                : post.getCreatedAt();
 
         // Use the later of the last comment time or the post creation time
         return lastCommentTime.isAfter(post.getCreatedAt()) ? lastCommentTime : post.getCreatedAt();
     }
 
-    
 }

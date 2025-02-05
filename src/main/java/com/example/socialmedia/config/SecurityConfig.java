@@ -19,8 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -47,12 +53,28 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+                    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(Arrays.asList(
+                            "Authorization",
+                            "Content-Type",
+                            "Accept",
+                            "X-Requested-With",
+                            "Cache-Control"
+                    ));
+                    config.setAllowCredentials(true);
+                    config.setMaxAge(3600L);
+                    return config;
+                }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/welcome", "/auth/signup", "/auth/login").permitAll()
+                        .requestMatchers("/auth/welcome", "/auth/signup", "/auth/login", "/error").permitAll()
                         .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/ws/**", "/ws").permitAll()
+                        .requestMatchers("/api/posts/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )

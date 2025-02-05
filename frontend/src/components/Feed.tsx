@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { BiTime, BiComment, BiUser } from "react-icons/bi";
 import { handleSessionExpired, checkAuthError } from "../utils/auth";
 import "../styles/Feed.css";
+import axiosInstance from "../utils/axiosConfig";
 
 interface Comment {
   id: string | null;
@@ -63,15 +64,7 @@ const Feed: React.FC = () => {
           return;
         }
 
-        const response = await axios.get(
-          "http://localhost:8080/api/posts/myfeed",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            timeout: 5000, // 5 seconds timeout
-          }
-        );
+        const response = await axiosInstance.get("/api/posts/myfeed");
         setPosts(response.data);
       } catch (err: any) {
         if (axios.isAxiosError(err) && !err.response) {

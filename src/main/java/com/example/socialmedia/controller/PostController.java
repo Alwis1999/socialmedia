@@ -5,6 +5,8 @@ import com.example.socialmedia.entity.Post;
 import com.example.socialmedia.dto.PostBody;
 import com.example.socialmedia.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +29,16 @@ public class PostController {
 
     // Get logged user posts
     @GetMapping("/myposts")
-    public List<Post> getMyPosts() {
-        return postService.getMyPosts();
+    public ResponseEntity<?> getMyPosts() {
+        try {
+            List<Post> posts = postService.getMyPosts();
+            return ResponseEntity.ok(posts);
+        } catch (Exception e) {
+            e.printStackTrace(); // Add logging
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching posts: " + e.getMessage());
+        }
     }
 
     // Get a specific user's posts
@@ -76,7 +86,14 @@ public class PostController {
 
     // Get a feed for the logged user
     @GetMapping("/myfeed")
-    public List<Post> getMyFeed() {
-        return postService.getMyFeed();
+    public ResponseEntity<?> getMyFeed() {
+        try {
+            List<Post> posts = postService.getMyFeed();
+            return ResponseEntity.ok(posts);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching feed: " + e.getMessage());
+        }
     }
 }

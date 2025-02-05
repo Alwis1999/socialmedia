@@ -1,6 +1,7 @@
 package com.example.socialmedia.controller;
 
 import com.example.socialmedia.dto.AuthRequest;
+import com.example.socialmedia.dto.AuthResponse;
 import com.example.socialmedia.dto.SignUpDTO;
 import com.example.socialmedia.service.JwtService;
 import com.example.socialmedia.service.UserInfoService;
@@ -61,17 +62,45 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody AuthRequest authRequest){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getUserName(), authRequest.getUserPassword()));
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getUsername(),
+                            authRequest.getPassword()));
 
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUserName());
+            if (authentication.isAuthenticated()) {
+                String accessToken = jwtService.generateAccessToken(authRequest.getUsername());
+                String refreshToken = jwtService.generateRefreshToken(authRequest.getUsername());
+                AuthResponse response = new AuthResponse(
+                        accessToken,
+                        refreshToken,
+                        authRequest.getUsername(),
+                        System.currentTimeMillis() + jwtService.getAccessTokenExpiration());
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid credentials");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error during authentication: " + e.getMessage());
         }
-        else {
-            throw new UsernameNotFoundException("Invalied User name");
-        }
+    }
 
+    @PostMapping("/refresh")
+    public AuthResponse refreshToken(@RequestHeader("Authorization") String refreshToken) {
+        if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+            String token = refreshToken.substring(7);
+            if (!jwtService.isTokenExpired(token)) {
+                String username = jwtService.extractUsername(token);
+                String newAccessToken = jwtService.generateAccessToken(username);
+                return new AuthResponse(
+                        newAccessToken,
+                        refreshToken,
+                        username,
+                        System.currentTimeMillis() + jwtService.getAccessTokenExpiration());
+            }
+        }
+        throw new RuntimeException("Invalid refresh token");
     }
 }
