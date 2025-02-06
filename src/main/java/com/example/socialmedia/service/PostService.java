@@ -42,7 +42,9 @@ public class PostService extends BaseFile {
         if (post.getComments() == null) {
             post.setComments(new ArrayList<>());
         }
-        post.getComments().add(comment);
+        // Create a new Comment object using the provided comment text and postId
+        Comment newComment = new Comment(comment.getComment(), postId);
+        post.getComments().add(newComment);
 
         return postRepository.save(post);
     }

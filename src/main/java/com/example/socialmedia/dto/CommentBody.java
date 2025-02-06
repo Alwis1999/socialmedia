@@ -4,9 +4,13 @@ import lombok.Data;
 
 @Data
 public class CommentBody {
-    private String content;
+    private String comment;
 
-    public CommentBody(String content) {
-        this.content = content;
+    // Default constructor is provided by Lombok's @Data annotation
+    public CommentBody() {
+    }
+
+    public CommentBody(String comment) {
+        this.comment = comment;
     }
 }

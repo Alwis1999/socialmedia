@@ -3,6 +3,7 @@ package com.example.socialmedia.controller;
 import com.example.socialmedia.entity.Comment;
 import com.example.socialmedia.entity.Post;
 import com.example.socialmedia.dto.PostBody;
+import com.example.socialmedia.dto.CommentBody;
 import com.example.socialmedia.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,7 +72,7 @@ public class PostController {
 
     // Add a comment to a post
     @PostMapping("/{postId}/comment")
-    public String addCommentToPost(@PathVariable String postId, @RequestBody Comment comment) {
+    public String addCommentToPost(@PathVariable String postId, @RequestBody CommentBody commentBody) {
         Post post = postService.getPostById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -80,6 +81,8 @@ public class PostController {
             return "You can only comment on your friends' posts";
         }
 
+        // Create a new Comment object using the commentBody
+        Comment comment = new Comment(commentBody.getComment(), postId);
         postService.addCommentToPost(postId, comment);
         return "Comment added successfully";
     }
