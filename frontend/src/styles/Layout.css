@@ -106,7 +106,7 @@
 }
 
 .main-content {
-  flex: 1;
+  width: 100%;
   max-width: 1200px;
   padding: 2rem;
   margin-left: 250px;
@@ -164,8 +164,13 @@
 
 .content-container {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 1rem;
+}
+
+.chat-room-container {
+  width: 100%;
+  padding: 1rem;
 }
 
 @media (max-width: 768px) {

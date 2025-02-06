@@ -184,74 +184,78 @@ const ChatRoomComponent: React.FC = () => {
 
   return (
     <div className="chat-app-wrapper">
-      <div className="chat-room-container">
-        <div className="friends-sidebar">
-          <h2>Friends</h2>
-          <div className="friends-list">
-            {friends.map((friend) => (
-              <button
-                key={`${friend.username}-${friend.objectId}`}
-                className={`friend-button ${
-                  selectedFriend?.objectId === friend.objectId ? "active" : ""
-                }`}
-                onClick={() => {
-                  setSelectedFriend(friend);
-                  fetchChatRoom(friend);
-                }}
-              >
-                <div className="friend-avatar">
-                  {getInitials(friend.username)}
-                </div>
-                {friend.username}
-              </button>
-            ))}
+      <div className="chat-content-container">
+        <div className="chat-room-container">
+          <div className="friends-sidebar">
+            <h2>Friends</h2>
+            <div className="friends-list">
+              {friends.map((friend) => (
+                <button
+                  key={`${friend.username}-${friend.objectId}`}
+                  className={`friend-button ${
+                    selectedFriend?.objectId === friend.objectId ? "active" : ""
+                  }`}
+                  onClick={() => {
+                    setSelectedFriend(friend);
+                    fetchChatRoom(friend);
+                  }}
+                >
+                  <div className="friend-avatar">
+                    {getInitials(friend.username)}
+                  </div>
+                  {friend.username}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="chat-window">
-          {selectedRoom ? (
-            <>
-              <h3>Chat with {selectedFriend?.username}</h3>
-              <div className="chat-messages" ref={chatMessagesRef}>
-                {messages.map((msg) => (
-                  <div
-                    key={`${msg.id}-${msg.timestamp}`}
-                    className={`message ${
-                      msg.senderId === loggedUserId ? "sent" : "received"
-                    }`}
-                  >
-                    <strong>{msg.senderId}</strong>
-                    <div className="message-content">{msg.messageContent}</div>
-                    <span
-                      className={`message-time ${
-                        !msg.timestamp ? "error" : ""
+          <div className="chat-window">
+            {selectedRoom ? (
+              <>
+                <h3>Chat with {selectedFriend?.username}</h3>
+                <div className="chat-messages" ref={chatMessagesRef}>
+                  {messages.map((msg) => (
+                    <div
+                      key={`${msg.id}-${msg.timestamp}`}
+                      className={`message ${
+                        msg.senderId === loggedUserId ? "sent" : "received"
                       }`}
                     >
-                      {formatMessageTime(msg.timestamp)}
-                    </span>
-                  </div>
-                ))}
+                      <strong>{msg.senderId}</strong>
+                      <div className="message-content">
+                        {msg.messageContent}
+                      </div>
+                      <span
+                        className={`message-time ${
+                          !msg.timestamp ? "error" : ""
+                        }`}
+                      >
+                        {formatMessageTime(msg.timestamp)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="chat-input">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type a message"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        sendMessage();
+                      }
+                    }}
+                  />
+                  <button onClick={sendMessage}>Send</button>
+                </div>
+              </>
+            ) : (
+              <div className="no-chat-selected">
+                <p>Select a friend to start messaging</p>
               </div>
-              <div className="chat-input">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type a message"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      sendMessage();
-                    }
-                  }}
-                />
-                <button onClick={sendMessage}>Send</button>
-              </div>
-            </>
-          ) : (
-            <div className="no-chat-selected">
-              <p>Select a friend to start messaging</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
