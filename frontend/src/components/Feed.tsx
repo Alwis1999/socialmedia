@@ -27,6 +27,9 @@ const Feed: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedComments, setExpandedComments] = useState<string[]>([]);
+  const [commentInput, setCommentInput] = useState<{ [key: string]: string }>(
+    {}
+  );
   const navigate = useNavigate();
 
   const formatDate = (dateArray: number[]) => {
@@ -53,6 +56,35 @@ const Feed: React.FC = () => {
         ? prev.filter((id) => id !== postId)
         : [...prev, postId]
     );
+  };
+
+  const handleCommentChange = (postId: string, value: string) => {
+    setCommentInput((prev) => ({ ...prev, [postId]: value }));
+  };
+
+  const submitComment = async (postId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        handleSessionExpired(navigate);
+        return;
+      }
+
+      await axiosInstance.post(`/api/posts/${postId}/comment`, {
+        comment: commentInput[postId],
+      });
+
+      // Clear the input after submission
+      setCommentInput((prev) => ({ ...prev, [postId]: "" }));
+      // Optionally, you can refetch the posts to get the latest comments
+      // fetchFeed(); // Uncomment if you want to refetch the feed
+    } catch (err: any) {
+      if (axios.isAxiosError(err) && !err.response) {
+        setError("Backend server is offline. We'll be back soon!");
+      } else if (!checkAuthError(err, navigate)) {
+        setError("Failed to post comment. Please try again later.");
+      }
+    }
   };
 
   useEffect(() => {
@@ -138,24 +170,43 @@ const Feed: React.FC = () => {
                   <span>{post.comments?.length || 0} Comments</span>
                 </button>
               </div>
-              {expandedComments.includes(post.id) && post.comments && (
+              {expandedComments.includes(post.id) && (
                 <div className="post-comments">
-                  {post.comments.map((comment, index) => (
-                    <div key={index} className="comment">
-                      <div className="comment-header">
-                        <div className="comment-user">
-                          <div className="user-avatar small">
-                            {comment.user[0].toUpperCase()}
+                  {post.comments &&
+                    post.comments.map((comment, index) => (
+                      <div key={index} className="comment">
+                        <div className="comment-header">
+                          <div className="comment-user">
+                            <div className="user-avatar small">
+                              {comment.user[0].toUpperCase()}
+                            </div>
+                            <span className="username">{comment.user}</span>
                           </div>
-                          <span className="username">{comment.user}</span>
+                          <span className="comment-date">
+                            <BiTime /> {formatDate(comment.commentAt)}
+                          </span>
                         </div>
-                        <span className="comment-date">
-                          <BiTime /> {formatDate(comment.commentAt)}
-                        </span>
+                        <div className="comment-content">{comment.comment}</div>
                       </div>
-                      <div className="comment-content">{comment.comment}</div>
-                    </div>
-                  ))}
+                    ))}
+                  {/* Always show the comment input field */}
+                  <div className="comment-input">
+                    <input
+                      type="text"
+                      placeholder="Add a comment..."
+                      value={commentInput[post.id] || ""}
+                      onChange={(e) =>
+                        handleCommentChange(post.id, e.target.value)
+                      }
+                      className="comment-input-field"
+                    />
+                    <button
+                      onClick={() => submitComment(post.id)}
+                      className="comment-submit-button"
+                    >
+                      Submit
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

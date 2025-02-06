@@ -60,4 +60,39 @@
   transform: translateY(-2px);
 }
 
+.comment-input {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.comment-input-field {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  transition: border-color 0.3s;
+}
+
+.comment-input-field:focus {
+  border-color: #1a73e8;
+  outline: none;
+}
+
+.comment-submit-button {
+  padding: 0.5rem 1rem;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.comment-submit-button:hover {
+  background-color: #1557b0;
+}
+
 /* Rest of the styles are similar to UserPosts.css */ 
