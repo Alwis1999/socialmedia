@@ -4,6 +4,7 @@ import { BiTime, BiComment, BiUser } from "react-icons/bi";
 import { BsPencilSquare } from "react-icons/bs";
 import { handleSessionExpired, checkAuthError } from "../utils/auth";
 import "../styles/UserPosts.css";
+import "../styles/Feed.css"; // Import Feed.css for styles
 import axiosInstance from "../utils/axiosConfig"; // Import axiosInstance
 // Import icons from react-icons
 import { FaRegComment, FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -29,6 +30,7 @@ const UserPosts: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedComments, setExpandedComments] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const formatDate = (dateArray: number[]) => {
@@ -57,6 +59,11 @@ const UserPosts: React.FC = () => {
         : [...prev, postId]
     );
   };
+
+  // Filter posts based on search query
+  const filteredPosts = posts.filter(post =>
+    post.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -122,7 +129,21 @@ const UserPosts: React.FC = () => {
           <BsPencilSquare /> New Post
         </button>
       </div>
-      {posts.length === 0 ? (
+
+      {/* Search Bar */}
+      <div className="search-container">
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search posts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+      </div>
+
+      {filteredPosts.length === 0 ? (
         <div className="no-posts">
           <p>You haven't created any posts yet.</p>
           <button className="create-post-btn">
@@ -131,7 +152,7 @@ const UserPosts: React.FC = () => {
         </div>
       ) : (
         <div className="posts-list">
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-header">
                 <div className="user-info">
