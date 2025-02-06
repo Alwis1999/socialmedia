@@ -99,4 +99,12 @@ public class PostController {
                     .body("Error fetching feed: " + e.getMessage());
         }
     }
+
+    // Get post by ID
+    @GetMapping("/postid/{id}")
+    public ResponseEntity<Post> getPostById(@PathVariable String id) {
+        Post post = postService.getPostById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        return ResponseEntity.ok(post);
+    }
 }

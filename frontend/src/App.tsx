@@ -20,6 +20,7 @@ import { isAuthenticated } from "./utils/auth";
 import Feed from "./components/Feed";
 import { withServerCheck } from "./components/withServerCheck";
 import Profile from "./components/Profile";
+import PostDetail from "./components/PostDetail";
 
 const ProtectedRouteWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -61,20 +62,14 @@ const App: React.FC = () => {
         <Route path="/auth/signup" element={<SignUpWithServerCheck />} />
 
         {/* Protected routes with layout */}
-        <Route
-          element={
-            <ProtectedRouteWrapper>
-              <ProtectedLayoutWithServerCheck />
-            </ProtectedRouteWrapper>
-          }
-        >
+        <Route element={<Layout />}>
           <Route path="/posts/myposts" element={<UserPosts />} />
           <Route path="/posts/create" element={<CreatePost />} />
           <Route path="/chat/chatroom" element={<ChatRoomComponent />} />
           <Route path="/friends/myfriends" element={<FriendListComponent />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/dashboard" element={<Navigate to="/feed" replace />} />
+          <Route path="/posts/postid/:id" element={<PostDetail />} />
         </Route>
 
         {/* Catch all route with notification */}

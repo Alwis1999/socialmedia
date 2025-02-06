@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { BiTime, BiComment, BiUser } from "react-icons/bi";
+import { BiTime, BiComment, BiUser, BiSearch } from "react-icons/bi";
 import { handleSessionExpired, checkAuthError } from "../utils/auth";
 import "../styles/Feed.css";
 import axiosInstance from "../utils/axiosConfig";
@@ -26,11 +26,17 @@ const Feed: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [expandedComments, setExpandedComments] = useState<string[]>([]);
   const [commentInput, setCommentInput] = useState<{ [key: string]: string }>(
     {}
   );
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const filteredPosts = posts.filter(post =>
+    post.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const formatDate = (dateArray: number[]) => {
     const date = new Date(
@@ -76,8 +82,6 @@ const Feed: React.FC = () => {
 
       // Clear the input after submission
       setCommentInput((prev) => ({ ...prev, [postId]: "" }));
-      // Optionally, you can refetch the posts to get the latest comments
-      // fetchFeed(); // Uncomment if you want to refetch the feed
     } catch (err: any) {
       if (axios.isAxiosError(err) && !err.response) {
         setError("Backend server is offline. We'll be back soon!");
@@ -85,6 +89,10 @@ const Feed: React.FC = () => {
         setError("Failed to post comment. Please try again later.");
       }
     }
+  };
+
+  const fetchPostById = (postId: string) => {
+    navigate(`/posts/postid/${postId}`);
   };
 
   useEffect(() => {
@@ -100,7 +108,6 @@ const Feed: React.FC = () => {
         setPosts(response.data);
       } catch (err: any) {
         if (axios.isAxiosError(err) && !err.response) {
-          // Network error or server is down
           setError("Backend server is offline. We'll be back soon!");
         } else if (!checkAuthError(err, navigate)) {
           setError("Failed to fetch feed posts. Please try again later.");
@@ -140,16 +147,31 @@ const Feed: React.FC = () => {
   return (
     <div className="feed-container">
       <h2>My Feed</h2>
-      {posts.length === 0 ? (
+      <div className="search-container">
+        <div className="search-wrapper">
+          <BiSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search posts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+      </div>
+      {filteredPosts.length === 0 ? (
         <div className="no-posts">
           <BiUser className="no-posts-icon" />
           <p>No posts in your feed yet.</p>
         </div>
       ) : (
         <div className="posts-list">
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <div key={post.id} className="post-card">
-              <div className="post-header">
+              <div
+                className="post-header"
+                onClick={() => fetchPostById(post.id)}
+              >
                 <div className="user-info">
                   <div className="user-avatar">
                     {post.user[0].toUpperCase()}
@@ -207,6 +229,22 @@ const Feed: React.FC = () => {
                       Submit
                     </button>
                   </div>
+                </div>
+              )}
+              {selectedPostId === post.id && (
+                <div className="selected-post-details">
+                  <h3>Post Details:</h3>
+                  <p>{post.content}</p>
+                  <h4>Comments:</h4>
+                  {post.comments && post.comments.length > 0 ? (
+                    post.comments.map((comment, index) => (
+                      <div key={index} className="comment">
+                        <strong>{comment.user}:</strong> {comment.comment}
+                      </div>
+                    ))
+                  ) : (
+                    <p>No comments yet.</p>
+                  )}
                 </div>
               )}
             </div>
