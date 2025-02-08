@@ -21,6 +21,7 @@ import Feed from "./components/Feed";
 import { withServerCheck } from "./components/withServerCheck";
 import Profile from "./components/Profile";
 import PostDetail from "./components/PostDetail";
+import UserPostsPage from './components/UserPostsPage';
 
 const ProtectedRouteWrapper = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const App: React.FC = () => {
           <Route path="/feed" element={<Feed />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/posts/postid/:id" element={<PostDetail />} />
+          <Route path="/posts/:username" element={<UserPostsPage />} />
         </Route>
 
         {/* Catch all route with notification */}

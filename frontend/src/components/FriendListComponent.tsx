@@ -173,6 +173,10 @@ const FriendListComponent: React.FC = () => {
     ));
   };
 
+  const handlePostClick = (username: string) => {
+    navigate(`/posts/${username}`);
+  };
+
   if (loading) {
     return (
       <div className="friends-loading">
@@ -248,14 +252,25 @@ const FriendListComponent: React.FC = () => {
                       {friend.username || "Unknown User"}
                     </span>
                   </div>
-                  <button
-                    className="chat-button"
-                    onClick={() => handleChatClick(friend.objectId)}
-                    title="Start chat"
-                  >
-                    <BiMessageSquare />
-                    <span>Chat</span>
-                  </button>
+                  <div className="friend-actions">
+                    {/* New Post Button */}
+                    <button
+                      className="chat-button"
+                      onClick={() => handlePostClick(friend.username)}
+                      title="Post"
+                    >
+                      <BiMessageSquare />
+                      <span>Post</span>
+                    </button>
+                    <button
+                      className="chat-button"
+                      onClick={() => handleChatClick(friend.objectId)}
+                      title="Start chat"
+                    >
+                      <BiMessageSquare />
+                      <span>Chat</span>
+                    </button>
+                  </div>
                 </div>
               ))}
           </div>

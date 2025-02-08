@@ -61,7 +61,7 @@ const UserPosts: React.FC = () => {
   };
 
   // Filter posts based on search query
-  const filteredPosts = posts.filter(post =>
+  const filteredPosts = posts.filter((post) =>
     post.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
