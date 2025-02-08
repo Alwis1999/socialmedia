@@ -16,7 +16,7 @@ interface ProfileData {
   username: string;
   email: string;
   roles: string;
-  createdAt: string;
+  createdAt: number[];
   friendsCount: number;
 }
 
@@ -59,7 +59,7 @@ const Profile: React.FC = () => {
         setProfileData(response.data);
       } catch (err: any) {
         console.error("Error fetching profile:", err);
-        setError(err.response?.data || "Failed to load profile data");
+        setError(err.response?.data?.message || "Failed to load profile data");
       } finally {
         setLoading(false);
       }
@@ -67,6 +67,24 @@ const Profile: React.FC = () => {
 
     fetchProfileData();
   }, [navigate]);
+
+  const formatDate = (dateArray: number[]) => {
+    const date = new Date(
+      dateArray[0],
+      dateArray[1] - 1,
+      dateArray[2],
+      dateArray[3],
+      dateArray[4],
+      dateArray[5]
+    );
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +119,9 @@ const Profile: React.FC = () => {
       });
       setShowPasswordChange(false);
     } catch (err: any) {
-      setPasswordError(err.response?.data || "Failed to update password");
+      setPasswordError(
+        err.response?.data?.message || "Failed to update password"
+      );
     }
   };
 
@@ -162,12 +182,10 @@ const Profile: React.FC = () => {
           </div>
 
           <div className="info-item">
-            <i className="info-icon far fa-calendar"></i>
+            <BiCalendar className="info-icon" />
             <div className="info-content">
               <label>Member Since</label>
-              <span>
-                {new Date(profileData?.createdAt || "").toLocaleDateString()}
-              </span>
+              <span>{formatDate(profileData?.createdAt || [])}</span>
             </div>
           </div>
         </div>
