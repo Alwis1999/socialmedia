@@ -134,52 +134,22 @@ const ChatRoomComponent: React.FC = () => {
       .slice(0, 2);
   };
 
-  const formatMessageTime = (timestamp: string) => {
-    try {
-      // Parse the ISO string to Date object
-      const date = new Date(timestamp);
-
-      // Check if date is valid
-      if (isNaN(date.getTime())) {
-        console.error("Invalid date:", timestamp);
-        return "Invalid date";
-      }
-
-      // Get current date for comparison
-      const now = new Date();
-      const isToday = date.toDateString() === now.toDateString();
-      const isYesterday =
-        new Date(now.setDate(now.getDate() - 1)).toDateString() ===
-        date.toDateString();
-
-      // Format time
-      const timeStr = date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
-      // If message is from today, just show time
-      if (isToday) {
-        return timeStr;
-      }
-
-      // If message is from yesterday, show "Yesterday" with time
-      if (isYesterday) {
-        return `Yesterday ${timeStr}`;
-      }
-
-      // Otherwise show full date with time
-      return date.toLocaleString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Invalid date";
-    }
+  const formatMessageTime = (dateArray: number[]) => {
+    const date = new Date(
+      dateArray[0],
+      dateArray[1] - 1,
+      dateArray[2],
+      dateArray[3],
+      dateArray[4],
+      dateArray[5]
+    );
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -225,11 +195,7 @@ const ChatRoomComponent: React.FC = () => {
                       <div className="message-content">
                         {msg.messageContent}
                       </div>
-                      <span
-                        className={`message-time ${
-                          !msg.timestamp ? "error" : ""
-                        }`}
-                      >
+                      <span className="message-time">
                         {formatMessageTime(msg.timestamp)}
                       </span>
                     </div>

@@ -67,6 +67,7 @@
 .info-content span {
   font-size: 1.1rem;
   color: #333;
+  /* Add any additional styles for the date here */
 }
 
 .profile-loading {
