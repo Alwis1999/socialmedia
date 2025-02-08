@@ -152,17 +152,22 @@
 }
 
 .message-content {
+  font-weight: bold;
   margin: 0.2rem 0;
   line-height: 1.4;
   font-size: 0.9rem;
 }
+
 
 .message-time {
   font-size: 0.7rem;
   opacity: 0.8;
   margin-top: 0.2rem;
   display: block;
+  font-weight: bold;
   text-align: right;
+  color: #f9e87f;
+
 }
 
 /* Chat input area */
